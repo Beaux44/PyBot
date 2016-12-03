@@ -1,6 +1,6 @@
 
 # PyBot is a Twitch IRC chatbot used particularly for spamming your chat, but as well as a general chatbot for doing whatever.
-# Copyright (C) 2016 Beaux
+# Copyright (C) 2016 Sheep44
 #
 # This file is part of PyBot.
 #
@@ -119,14 +119,13 @@ while True:
 					sendMessage(s, "UID: " + str(UID))
 					break
 				if message.startswith("!!"):
-					t(1)
 					spam = getSPAM(message)
 					t(.25)
 					sendMessage(s, spam)
 					break
 				if "RAGE" in message:
 					t(.5)
-					sendMessage(s, "RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace")
+					sendMessage(s, "RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace")
 					break
 				if message.startswith("salty"):
 					t(.5)

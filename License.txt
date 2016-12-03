@@ -1,5 +1,5 @@
 PyBot is a Twitch IRC chatbot used particularly for spamming your chat, but as well as a general chatbot for doing whatever.
-Copyright © 2016 Beaux
+Copyright © 2016 Sheep44
 
 PyBot is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
