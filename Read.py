@@ -18,6 +18,8 @@
 
 import string
 
+from Settings import CHANNEL
+
 from time import sleep as t
 
 # Gets the username, without capitals, can be used for detecting if a particular whatever is in the username.
