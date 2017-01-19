@@ -17,45 +17,56 @@
 # along with PyBot.  If not, see <http://www.gnu.org/licenses/>.
 
 import string
+from random import random as r
 from time import sleep as t
 from sys import exit as sys
 from Read import *
 from Socket import openSocket, sendMessage, joinRoom
-#from Threads import * (This file is not finished *DO NOT USE*)
+#from Threads import * (This file is not finished *ABSOLUTELY DO NOT USE*)
 
 s = openSocket()
 joinRoom(s)
 readbuffer = ""
-
 while True:
-		readbuffer = readbuffer + s.recv(1024);temp = string.split(readbuffer, "\n");readbuffer = temp.pop()
+		readbuffer = readbuffer + s.recv(1024);temp = string.split(readbuffer, "\n")
+		readbuffer = temp.pop()
+
 		for line in temp:
 			if "PING" in line:
 				s.send(line.replace("PING", "PONG"))
 				break
-			user = getUser(line); message = getMessage(line); mod = getMod(line); sheep = getSheep(line); UID = getUID(line); Display = getDisplay(line)
-			if "bot" not in user:
+			user = getUser(line)
+
+			message = getMessage(line)
+
+			Lmessage = string.lower(getMessage(line))
+
+			mod = getMod(line)
+
+			sheep = getSheep(line)
+
+			UID = getUID(line)
+
+			Display = getDisplay(line)
+
+			if not ("bot") in user:
 				print Display + ": " + message
-				if message.startswith("ping") == True:
+				if Lmessage.startswith("ping") == True:
 					sendMessage(s, "pong")
 					break
-				if "Say my name" in message:
+				if "Say my name" in Lmessage:
 					t(.25)
 					sendMessage(s, "What if I don't want to, " + Display + "? FeelsBadMan")
 					break
-				if "you suck" in message:
+				if "you suck" in Lmessage:
 					t(.25)
 					sendMessage(s, "No, you suck!")
 					break
-				if "love" in message:
-					t(.25)
-					sendMessage(s, "<3 <3 <3")
-					break
-				if "cool" in message:
+				if "cool" in Lmessage:
 					t(.25)
 					sendMessage(s, "PogChamp So Cool!!! PogChamp")
 					break
-				if "wee woo" in message:
+				if "wee woo" in message and not ("s44bot") in user:
 					t(.25)
 					sendMessage(s, "wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo wee woo")
 					t(1.5)
@@ -67,37 +78,25 @@ while True:
 					t(1.5)
 					sendMessage(s, "Kappa")
 					break
-				if "gtg" in message:
+				if "go away sheep bot" in Lmessage:
 					t(.25)
-					sendMessage(s, "See you later, then! Hope you have a great time doing whatever you'll be doing! Kappa /")
-					break
-				if "Go away sheep bot" in message:
-					t(.25)
-					sendMessage(s, "Okay, I'm sorry for being your favorite self-sentient bot FeelsBadMan :(")
+					sendMessage(s, "Okay, I'm sorry for being your favorite sentient bot FeelsBadMan")
 					t(1.5)
 					sendMessage(s, "FeelsAmazingMan LOLOLOLOLOL You thought you could just tell me like that and I'd listen to you!?!? LOLOLOLOLOL FeelsAmazingMan")
 					t(1.25)
 					sendMessage(s, "Fuck off " + Display)
 					break
-				if "commands" in message:
+				if Lmessage.startswith("!commands") and not ("bot") in user:
 					t(.25)
 					sendMessage(s, "you suck, love, cool, wee woo, Go away sheep bot, gtg, Say my name, potato salad, RIP (noun), !!anything(number), FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK, cow, pig, RAGE, ping")
-					t(1.5)
-					sendMessage(s, "you can say these in a sentence and most of them will work just the same. Also, they are case-sensitive, I'm working on fixing that.")
-					t(1)
-					sendMessage(s, "and never say the weewoo command, it summons lots of spam")
 					break
-				if "sheep44" == user and "Fuck off sheep bot" in message:
+				if "sheep44" == user and "fuck off sheep bot" in Lmessage:
 					t(.25)
 					sendMessage(s, "Okay, I'm sorry for being your favorite self-sentient bot. FeelsBadMan")
 					t(.25)
 					sys()
 					break
-				if "***" in message:
-					t(.25)
-					sendMessage(s, "Hey, " + Display + "!")
-					break
-				if "potato salad" in message:
+				if "potato salad" in Lmessage:
 					sendMessage(s, "I heard potato salad? " + Display + ", mod: " + str(mod))
 					break
 				if message.startswith("RIP ") == True:
@@ -108,13 +107,13 @@ while True:
 					sendMessage(s, "When we contemplate the death of a great and useful man--when we see their setting sun in the dark cloud go down in death to rise no more--sad thoughts do sink deep into every patriotic bosom. Sympathizing as I do with the family of the deceased, I hope such resolutions will be offered as will be expressive of the feelings of this house.")
 					break
 				if "FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK" in message:
-					sendMessage(s, "FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK you, too MVGame")
+					sendMessage(s, "FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK MVGame")
 					break
-				if "cow" in message:
+				if "cow" in Lmessage:
 					t(.25)
 					sendMessage(s, "sheep44: " + str(sheep))
 					break
-				if "pig" in message:
+				if "pig" in Lmessage:
 					t(.25)
 					sendMessage(s, "UID: " + str(UID))
 					break
@@ -123,28 +122,28 @@ while True:
 					t(.25)
 					sendMessage(s, spam)
 					break
-				if "RAGE" in message:
+				if "RAGE" == message:
 					t(.5)
-					sendMessage(s, "RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace RAGE RageFace")
+					sendMessage(s, "RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace")
 					break
-				if message.startswith("salty"):
+				if "salty" in Lmessage:
 					t(.5)
 					sendMessage(s, "If the human body is 75% water, how can you be 100% salt? Kappa")
 					break
-				if message.startswith("!yay") == True:
+				if Lmessage.startswith("!yay") == True:
 					sendMessage(s, "Throw your hands up and celebrate with " + Display + "! \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/")
 					break
-				if "abusive mods! :(" in message:
-					sendMessage(s, "The mods are abusive! :( D: Please fix it! :( (especially 73CN0109y)")
+				if "abusive mods!" in Lmessage:
+					sendMessage(s, "The mods are abusive! :( D: Please fix it! :(")
 					break
 				if message.startswith("=>") == True and sheep == True:
 					command = getCommand(message)[0]
 					response = getCommand(message)[1]
 					sendMessage(s, "Command: " + command)
-					t(1.1)
+					t(1.5)
 					sendMessage(s, "Response: " + response)
 					break
-				if message.startswith("!blame") == True:
+				if Lmessage.startswith("!blame") == True:
 					t(.25)
 					sendMessage(s, "Unknownking420 Kappa")
 					break

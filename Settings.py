@@ -17,6 +17,6 @@
 
 HOST = "irc.twitch.tv"
 PORT = 6667
-CHANNEL = "(channel)"
+CHANNEL = "(channel name)"
 PASS = "(oauth)"
 NICK = "(bot name)"

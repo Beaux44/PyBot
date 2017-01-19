@@ -29,8 +29,7 @@ pyc("Threads.py")
 try: # if the file does not exist, it will bring up an error
     # these remove the current file because on windows,
     # moving a file to another file's directory even if they
-    # are the same file, brings up an error, however in Linux,
-    # it's the opposite
+    # are the same file, brings up an error.
     rem(path + "/release/Read.pyc")
     rem(path + "/release/Settings.pyc")
     rem(path + "/release/Socket.pyc")

@@ -28,8 +28,8 @@ def getUser(line):
 
 # Gets the message (It's that simple!)
 def getMessage(line):
-	separate = line.split(":", 2)
-	message = separate[2]
+	separate = line.split("PRIVMSG #" + CHANNEL + " :", 1)
+	message = separate[1]
 	return message
 
 # This is used for the RIP command in run.py, you can read it if you want, I don't care

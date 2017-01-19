@@ -26,7 +26,6 @@ from Settings import * # imports all the settings, don't have any duplicates
 
 # opens the socket to the Twitch IRC, used whenever a message is sent
 def openSocket():
-
 	s = socket.socket()
 	s.connect((HOST, PORT))
 	s.send("PASS " + PASS + "\r\n")
