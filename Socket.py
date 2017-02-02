@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # PyBot is a Twitch IRC chatbot used particularly for spamming your chat, but as well as a general chatbot for doing whatever.
 # Copyright (C) 2016 Sheep44
 #
@@ -20,9 +22,11 @@ import socket
 
 import string
 
-from time import sleep as t # time.sleep() as t()
+from time import sleep as t
 
-from Settings import * # imports all the settings, don't have any duplicates
+from Settings import *
+
+from random import randint as r
 
 # opens the socket to the Twitch IRC, used whenever a message is sent
 def openSocket():
@@ -30,14 +34,14 @@ def openSocket():
 	s.connect((HOST, PORT))
 	s.send("PASS " + PASS + "\r\n")
 	s.send("NICK " + NICK + "\r\n")
-	s.send("CAP REQ :twitch.tv/tags \r\n") # requests Twitch sens you more information, there's multiple different CAP REQs that you can use, but this one is very useful
+	s.send("CAP REQ :twitch.tv/tags \r\n") # requests Twitch sends you more information.
 	s.send("JOIN #" + CHANNEL + "\r\n")
 	return s
 
 # sends the specified message to the Twitch IRC
 def sendMessage(s, message):
 	if message == "": return
-	messageTemp = "PRIVMSG #" + CHANNEL + " :" + str(message)
+	messageTemp = "PRIVMSG #" + CHANNEL + str(message)
 	s.send(messageTemp + "\r\n")
 	print("Sent: " + str(message))
 
@@ -51,8 +55,9 @@ def joinRoom(s):
 		readbuffer = temp.pop()
 
 		for line in temp:
+			print(line)
 			Loading = loadingComplete(line)
-	sendMessage(s, "Hello everybody :) /")
+	sendMessage(s, "Hello :) /")
 
 # defines when connected to the IRC
 def loadingComplete(line):

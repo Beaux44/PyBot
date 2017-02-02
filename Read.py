@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # PyBot is a Twitch IRC chatbot used particularly for spamming your chat, but as well as a general chatbot for doing whatever.
 # Copyright (C) 2016 Sheep44
 #
@@ -30,8 +32,7 @@ def getUser(line):
 
 # Gets the message (It's that simple!)
 def getMessage(line):
-	separate = line.split("PRIVMSG #" + CHANNEL + " :", 1)
-	message = separate[1]
+	message = line.split("PRIVMSG #" + CHANNEL + " :", 1)[1]
 	return message
 
 # This is used for the RIP command in run.py, you can read it if you want, I don't care
@@ -111,3 +112,7 @@ def getCommand(message):
 		# o.write("					break\n")
 		# o.close()
 		return index
+def getRequest(Display, message):
+	o = open("Requests.txt", a)
+	o.write(Display + ": " + message[8:])
+	o.close()
