@@ -1,3 +1,4 @@
+:: This is just so you can easily and quickly test the bot
 @echo off
 title Bot Test
 :start
