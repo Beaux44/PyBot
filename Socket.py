@@ -26,8 +26,6 @@ from time import sleep as t
 
 from Settings import *
 
-from random import randint as r
-
 # opens the socket to the Twitch IRC, used whenever a message is sent
 def openSocket():
 	s = socket.socket()
@@ -38,12 +36,21 @@ def openSocket():
 	s.send("JOIN #" + CHANNEL + "\r\n")
 	return s
 
+# Exits the chat room
+def Exit():
+	s = socket.socket()
+	s.send("PART" + HOST)
+	t(0.5)
+	dednow()
+
+
 # sends the specified message to the Twitch IRC
 def sendMessage(s, message):
 	if message == "": return
 	messageTemp = "PRIVMSG #" + CHANNEL + str(message)
 	s.send(messageTemp + "\r\n")
 	print("Sent: " + str(message))
+	return
 
 # used to join the Twitch IRC chat room
 def joinRoom(s):

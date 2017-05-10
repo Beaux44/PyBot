@@ -41,7 +41,7 @@ def parseRIP(message):
 	name = seperate.split(':', 1)[0]
 	return name
 
-# returns wheter the person is a mod
+# returns whether the person is a mod
 def getMod(line):
 	if not line.startswith('@'): return False
 	seperate = line.split(' ')[0]
@@ -58,7 +58,7 @@ def getUID(line):
 	if ((line.find(' ') < index) or (index < 0)): index = line.find(' ')
 	return line[0: index]
 
-# I add kind of just added this for myself, It just checks to see if the user is me
+# I kind of just added this for myself, It just checks to see if the user is me
 def getSheep(line):
 	if not line.startswith("@"): return False
 	index = line.find('user-id')
@@ -80,22 +80,22 @@ def getDisplay(line):
 
 # This exists for the sole purpose of spamming your chat, you might want to disable it, I don't know.
 def getSPAM(message):
-	if message == "!!": print 'Syntax error'; return''
+	if message == "!!": print('Syntax error'); return''
 	message = message.strip()
 	index = message[2:-1]
-	if index == "": print 'Syntax error'; return ''
+	if index == "": print('Syntax error'); return ''
 	index = index.split("(", 1)
 	try:
 		if index[0] == "": return ''
 		if index[1] == "": return ''
 	except IndexError:
-		print 'Syntax error'; return ''
+		print('Syntax error'); return ''
 	word = index[0] + " "
 	number = index[1]
 	try:
 		spam = word * int(number)
 	except (TypeError, ValueError, OverflowError):
-		print 'Syntax error'; return ''
+		print'Syntax error'; return ''
 	t(.1)
 	return spam
 
@@ -106,13 +106,14 @@ def getCommand(message):
 		index = index.split("(", 1)
 		index[0] = index[0][:-1]
 		# o = open(commands.dat, 'w')
-		# o.write("				if message.startswith(\"!" + index[0] + "\"):\n")
-		# o.write("					t(.75)\n")
-		# o.write("					sendMessage(s, \"" + index[1] + "\")\n")
-		# o.write("					break\n")
+		# o.write("    if message.startswith(\"!" + index[0] + "\"):\n")
+		# o.write("     t(.75)\n")
+		# o.write("     sendMessage(s, \"" + index[1] + "\")\n")
+		# o.write("     break\n")
 		# o.close()
 		return index
 def getRequest(Display, message):
-	o = open("Requests.txt", a)
+	o = open("Requests.txt", "a")
 	o.write(Display + ": " + message[8:])
 	o.close()
+	return
