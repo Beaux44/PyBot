@@ -13,9 +13,6 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with PyBot.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import socket
@@ -30,35 +27,36 @@ from Settings import *
 def openSocket():
 	s = socket.socket()
 	s.connect((HOST, PORT))
-	s.send("PASS " + PASS + "\r\n")
-	s.send("NICK " + NICK + "\r\n")
-	s.send("CAP REQ :twitch.tv/tags \r\n") # requests Twitch sends you more information.
-	s.send("JOIN #" + CHANNEL + "\r\n")
+	s.send(("PASS " + PASS + "\r\n").encode())
+	s.send(("NICK " + NICK + "\r\n").encode())
+	s.send(("CAP REQ :twitch.tv/tags \r\n").encode()) # requests Twitch send you more information.
+	s.send(("JOIN #" + CHANNEL + "\r\n").encode())
 	return s
 
 # Exits the chat room
-def Exit():
-	s = socket.socket()
-	s.send("PART" + HOST)
+def Exit(s):
+	s.send(("PART #" + HOST).encode())
 	t(0.5)
-	dednow()
+	exit()
 
 
 # sends the specified message to the Twitch IRC
 def sendMessage(s, message):
-	if message == "": return
-	messageTemp = "PRIVMSG #" + CHANNEL + str(message)
-	s.send(messageTemp + "\r\n")
-	print("Sent: " + str(message))
-	return
+	if message != "":
+		messageTemp = "PRIVMSG #" + CHANNEL + " :" + str(message)
+		t(0.05)
+		s.send((messageTemp + "\r\n").encode())
+		print("Sent:", str(message))
 
 # used to join the Twitch IRC chat room
 def joinRoom(s):
 	readbuffer = ""
 	Loading = True
 	while Loading:
-		readbuffer = readbuffer + s.recv(1024)
-		temp = string.split(readbuffer, "\n")
+		readbuffer = s.recv(1024)
+		readbuffer = readbuffer.decode()
+		temp = readbuffer.split("\n")
+		readbuffer = readbuffer.encode()
 		readbuffer = temp.pop()
 
 		for line in temp:

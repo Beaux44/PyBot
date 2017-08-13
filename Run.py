@@ -13,66 +13,63 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with PyBot.  If not, see <http://www.gnu.org/licenses/>.
 
-import string
-from random import randint as r
+from random import choice as r
 from time import sleep as t
 from Read import *
-from Socket import openSocket, sendMessage, joinRoom
+from Socket import openSocket, sendMessage, joinRoom, Exit
 from Settings import *
 #from Threads import * (This file is not finished*)
 
-Meme = [
-u"~~~~~~~[]=¤ԅ( ◔益◔ )ᕗ The longer you cage us, the harder our arm of righteous spam will smite thee! ~~~~~~~[]=¤ԅ( ◔益◔ )ᕗ",
-u"୧༼ಠ益ಠ༽୨ WHY ARE WE RIOTING ୧༼ಠ益ಠ༽୨ ୧༼ಠ益ಠ༽୨ WHY ARE WE RIOTING ୧༼ಠ益ಠ༽୨ ୧༼ಠ益ಠ༽୨ WHY ARE WE RIOTING ୧༼ಠ益ಠ༽୨",
-u"Europe was founded in 1848 by Walker Texas Ranger when he rode a horse across the Atlantic, he called it \"Eastern USA\" which was eventually abbreviated as just \"EU\"",
-u"———————————————————————— imGlitch You have been gifted the Golden Kappa!————————————————————————",
-u"PogChamp PogChamp HOLD CTRL AND TYPE \"WTF\" FOR ℱ𝓪𝓷𝓬𝔂 𝓦𝓣ℱ PogChamp PogChamp",
-u"ヽ༼ ͠ ͠°〜 ͜ʖ〜 ͠ ͠° ༽ﾉ¤=[———— Hello. My name is Inigo Dongtoya. You killed my Kappa. Prepare to die.",
-u"MrDestructoid ban MrDestructoid one MrDestructoid bot MrDestructoid manufacture MrDestructoid another MrDestructoid",
-u"MrDestructoid ME BOT MrDestructoid ME SPAM MrDestructoid NO VIEWERS MrDestructoid IF BAN MrDestructoid",
-u"FeelsBadMan THIS USED TO BE A 2016 STREAM FeelsBadMan THIS USED TO BE A 2016 STREAM FeelsBadMan",
-u"୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨ ୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨ ୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨ ୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨ ୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨",
-u"Hello I am Ka­ppa Ka­pparino. I'm an employee at Twitch and am currently testing changes to the Ka­ppa emote. Can you please type Ka­ppa to confirm that it's working?",
-u"My Ka­ppa privileges have been revoked. FeelsBadMan",
-u"~~~~~~~[]=¤ԅ[✖Ĺ̯ಠ]╯ AND NOW WE MUTINY! ~~~~~~~[]=¤ԅ[✖Ĺ̯ಠ]/",
-u"( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ clickty clack clickty clack with this chant I summon spam to the chat ( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ",
-u"Tᴏ ᴘʀᴏᴛᴇᴄᴛ ᴛʜᴇ ᴄʜᴀᴛ ғʀᴏᴍ ᴅᴇᴠᴀsᴛᴀᴛɪᴏɴ. ᴛᴏ ᴜɴɪᴛᴇ ᴀʟʟ sᴘᴀᴍᴍᴇʀs ᴡɪᴛʜɪɴ ᴏᴜʀ ɴᴀᴛɪᴏɴ. ᴛᴏ ᴅᴇɴᴏᴜɴᴄᴇ ᴛʜᴇ ᴇᴠɪʟ ᴏғ Tʀᴜᴍᴘ ᴀɴᴅ ᴍᴏᴅs. ᴛᴏ ᴇxᴛᴇɴᴅ ᴏᴜʀ sᴘᴀᴍ ᴛᴏ ᴛʜᴇ sᴛᴀʀs ᴀʙᴏᴠᴇ. ᴄᴏᴘʏ! ᴘᴀsᴛᴇ! ᴄʜᴀᴛ sᴘᴀᴍ ʙʟᴀsᴛ ᴏғғ ᴀᴛ ᴛʜᴇ sᴘᴇᴇᴅ ᴏғ ʟɪɢʜᴛ! sᴜʀʀᴇɴᴅᴇʀ ᴍᴏᴅs ᴏʀ ᴘʀᴇᴘᴀʀᴇ ᴛᴏ ғɪɢʜᴛ.",
-u"H ＥＬＬＯ ＡＭ ４８ ＹＥＡＲ ＭＡＮ ＦＲＯＭ ＳＯＭＡＬＩＡ． ＳＯＲＲＹ ＦＯＲ ＢＡＤ ＥＮＧＬＡＮＤ． Ｉ ＳＥＬＬＥＤ ＭＹ ＷＩＦＥ ＦＯＲ ＩＮＴＥＲＮＥＴ ＣＯＮＮＥＣＴＩＯＮ ＦＯＲ ＰＬＡＹ ＂ｈｅａｒｔｈ ｓｔｏｎｅ＂ ＡＮＤ Ｉ ＷＡＮＴ ＴＯ ＢＥＣＯＭＥ ＴＨＥ ＧＯＯＤＥＳＴ ＰＬＡＹＥＲ ＬＩＫＥ ＹO U",
-u"° ☾ ☆ ¸. ¸ 　★　 :.　 . • ○ ° ★　 .　 　.　.　　¸ .　　 ° 　¸. * ● ¸ .　...somewhere　　　° ☾ ° 　¸. ● ¸ .　　★　° :.　 . • ° 　 .　 *　:.　.in a parallel universe ● ¸ 　　　　° ☾ °☆ 　. * ¸.　　　★　★ ° . .　　　　.　☾ °☆ 　. * ● chat actually loves spam...° ☾　★ °● ¸ .　　　★　° :.　 . • ",
-u"If you eat an apple a day you should likely go to a doctor, because of the saying, \"an apple a day keeps the doctor away,\" will falsely lead you to believe that you don't need to go to the doctor, so if you do in fact believe in it, you would have unlikely gone to a doctor in a while, however, you must go to the doctor a reasonable number of times, as everyone else does. Kappa",
-u"I AM LORD KAPPA. ._.",
-u"(╯°□°)╯︵┻━┻                                                     ┬─┬﻿ ノ( ゜-゜ノ) ",
-u"╲⎝⧹╲⎝⧹ WutFace ⧸⎠╱⧸⎠╱",
-u"DICKS OUT HANDS UP!                        \\ o /                                                                    | =========================>                          / \\"]
+Memes = [
+	"~~~~~~~[]=¤ԅ( ◔益◔ )ᕗ The longer you cage us, the harder our arm of righteous spam will smite thee! ~~~~~~~[]=¤ԅ( ◔益◔ )ᕗ",
+	"୧༼ಠ益ಠ༽୨ WHY ARE WE RIOTING ୧༼ಠ益ಠ༽୨ ୧༼ಠ益ಠ༽୨ WHY ARE WE RIOTING ୧༼ಠ益ಠ༽୨ ୧༼ಠ益ಠ༽୨ WHY ARE WE RIOTING ୧༼ಠ益ಠ༽୨",
+	"Europe was founded in 1848 by Walker Texas Ranger when he rode a horse across the Atlantic, he called it \"Eastern USA\" which was eventually abbreviated as just \"EU\"",
+	"———————————————————————— imGlitch You have been gifted the Golden Kappa!————————————————————————",
+	"PogChamp PogChamp HOLD CTRL AND TYPE \"WTF\" FOR ℱ𝓪𝓷𝓬𝔂 𝓦𝓣ℱ PogChamp PogChamp",
+	"ヽ༼ ͠ ͠°〜 ͜ʖ〜 ͠ ͠° ༽ﾉ¤=[———— Hello. My name is Inigo Dongtoya. You killed my Kappa. Prepare to die.",
+	"MrDestructoid ban MrDestructoid one MrDestructoid bot MrDestructoid manufacture MrDestructoid another MrDestructoid",
+	"MrDestructoid ME BOT MrDestructoid ME SPAM MrDestructoid NO VIEWERS MrDestructoid IF BAN MrDestructoid",
+	"FeelsBadMan THIS USED TO BE A 2016 STREAM FeelsBadMan THIS USED TO BE A 2016 STREAM FeelsBadMan",
+	"୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨ ୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨ ୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨ ୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨ ୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨୧༼ಠ益▀̿༽୨ Pillage and Plunder ୧༼ಠ益▀̿༽୨",
+	"Hello I am Ka­ppa Ka­pparino. I'm an employee at Twitch and am currently testing changes to the Ka­ppa emote. Can you please type Ka­ppa to confirm that it's working?",
+	"My Ka­ppa privileges have been revoked. FeelsBadMan",
+	"~~~~~~~[]=¤ԅ[✖Ĺ̯ಠ]╯ AND NOW WE MUTINY! ~~~~~~~[]=¤ԅ[✖Ĺ̯ಠ]/",
+	"( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ clickty clack clickty clack with this chant I summon spam to the chat ( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ",
+	"Tᴏ ᴘʀᴏᴛᴇᴄᴛ ᴛʜᴇ ᴄʜᴀᴛ ғʀᴏᴍ ᴅᴇᴠᴀsᴛᴀᴛɪᴏɴ. ᴛᴏ ᴜɴɪᴛᴇ ᴀʟʟ sᴘᴀᴍᴍᴇʀs ᴡɪᴛʜɪɴ ᴏᴜʀ ɴᴀᴛɪᴏɴ. ᴛᴏ ᴅᴇɴᴏᴜɴᴄᴇ ᴛʜᴇ ᴇᴠɪʟ ᴏғ Tʀᴜᴍᴘ ᴀɴᴅ ᴍᴏᴅs. ᴛᴏ ᴇxᴛᴇɴᴅ ᴏᴜʀ sᴘᴀᴍ ᴛᴏ ᴛʜᴇ sᴛᴀʀs ᴀʙᴏᴠᴇ. ᴄᴏᴘʏ! ᴘᴀsᴛᴇ! ᴄʜᴀᴛ sᴘᴀᴍ ʙʟᴀsᴛ ᴏғғ ᴀᴛ ᴛʜᴇ sᴘᴇᴇᴅ ᴏғ ʟɪɢʜᴛ! sᴜʀʀᴇɴᴅᴇʀ ᴍᴏᴅs ᴏʀ ᴘʀᴇᴘᴀʀᴇ ᴛᴏ ғɪɢʜᴛ.",
+	"H ＥＬＬＯ ＡＭ ４８ ＹＥＡＲ ＭＡＮ ＦＲＯＭ ＳＯＭＡＬＩＡ． ＳＯＲＲＹ ＦＯＲ ＢＡＤ ＥＮＧＬＡＮＤ． Ｉ ＳＥＬＬＥＤ ＭＹ ＷＩＦＥ ＦＯＲ ＩＮＴＥＲＮＥＴ ＣＯＮＮＥＣＴＩＯＮ ＦＯＲ ＰＬＡＹ ＂ｈｅａｒｔｈ ｓｔｏｎｅ＂ ＡＮＤ Ｉ ＷＡＮＴ ＴＯ ＢＥＣＯＭＥ ＴＨＥ ＧＯＯＤＥＳＴ ＰＬＡＹＥＲ ＬＩＫＥ ＹO U",
+	"° ☾ ☆ ¸. ¸ 　★　 :.　 . • ○ ° ★　 .　 　.　.　　¸ .　　 ° 　¸. * ● ¸ .　...somewhere　　　° ☾ ° 　¸. ● ¸ .　　★　° :.　 . • ° 　 .　 *　:.　.in a parallel universe ● ¸ 　　　　° ☾ °☆ 　. * ¸.　　　★　★ ° . .　　　　.　☾ °☆ 　. * ● chat actually loves spam...° ☾　★ °● ¸ .　　　★　° :.　 . • ",
+	"I AM LORD KAPPA. ._.",
+	"(╯°□°)╯︵┻━┻                                                     ┬─┬﻿ ノ( ゜-゜ノ) ",
+	"╲⎝⧹╲⎝⧹ WutFace ⧸⎠╱⧸⎠╱",
+	"DICKS OUT HANDS UP!                        \\ o /                                                                    | =========================>                          / \\"
+]
 
 
 s = openSocket()
 joinRoom(s)
 readbuffer = ""
 while True:
-	t(3)
-	readbuffer = readbuffer + s.recv(1024)
-	temp = string.split(readbuffer, "\n")
+	readbuffer = s.recv(1024)
+	readbuffer = readbuffer.decode()
+	temp = readbuffer.split("\n")
+	readbuffer = readbuffer.encode()
 	readbuffer = temp.pop()
 
 	for line in temp:
 		if "PING :tmi.twitch.tv" in line:
-			s.send(line.replace("PING", "PONG"))
+			s.send(line.replace("PING", "PONG").encode())
 			print(line)
 			print(line.replace("PING", "PONG"))
 			break
-		if not ("PING :tmi.twitch.tv") in line:
+		else:
 			Display = getDisplay(line)
 
 			user = getUser(line)
 
 			message = str(getMessage(line))
 
-			Lmessage = str(string.lower(getMessage(line)))
+			Lmessage = str(getMessage(line).lower())
 
 			mod = getMod(line)
 
@@ -80,16 +77,16 @@ while True:
 
 			UID = getUID(line)
 
-			if not ("bot") in user:
-				print(Display + ": " + message)
-				o = open("chat.txt", 'a')
-				o.write(Display + ": " + message + "\r\n")
-				o.close()
-				if "sheep44" == user and ("fuck off sheep bot") in Lmessage:
+			print(Display + ": " + message)
+			o = open("chat.txt", 'a')
+			o.write(Display + ": " + message + "\r\n")
+			o.close()
+			if not "bot" in user:
+				if "sheep44" == user and "fuck off sheep bot" in Lmessage:
 					t(.25)
 					sendMessage(s, "Okay, I'm sorry for being your favorite self-sentient bot. FeelsBadMan")
-					t(.25)
-					Exit()
+					t(.50)
+					Exit(s)
 					break
 				if "!ping" in Lmessage and sheep:
 					sendMessage(s, "pong")
@@ -131,7 +128,7 @@ while True:
 					t(.25)
 					sendMessage(s, "UID: " + str(int(UID)))
 					break
-				if message.startswith("!!"):
+				if message.startswith("=>"):
 					spam = getSPAM(message)
 					t(.25)
 					sendMessage(s, spam)
@@ -150,7 +147,7 @@ while True:
 				if "abusive mods!" in Lmessage:
 					sendMessage(s, "The mods are abusive! :( D: Please fix it! :(")
 					break
-				if message.startswith("=>") and sheep:
+				if message.startswith("!!") and sheep:
 					command = getCommand(message)[0]
 					response = getCommand(message)[1]
 					sendMessage(s, "Command: " + command)
@@ -163,8 +160,7 @@ while True:
 					break
 				if Lmessage.startswith("!memeplz"):
 					t(.25)
-					RI = r(0, len(Meme))
-					sendMessage(s, Meme[RI].encode("utf-8"))
+					sendMessage(s, r(Memes))
 					break
 				if Lmessage.startswith("!request"):
 					getRequest(Display, message)
