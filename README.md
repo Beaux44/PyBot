@@ -6,11 +6,11 @@ I'm currently attempting to create a chat-based programming language for the bot
 ***
 ### So, here's the check list for the project *(I had a slight revelation that my code is more than a little bit messed up, so this will be significantly postponed)*:
 
-|             Objective           |            Objective ETA         |
-|:-------------------------------:|:--------------------------------:|
-|*Chat-based* Programming Language|            Jan 25, 2017          |
-|         Points System           |            Apr 14, 2017          |
-|     Add Commands With Chat      |            Mar 18, 2017          |
-|        Minigames System         |            June 12, 2017         |
-|        Intuitive NLP AI         | Undefinitively Long Time From Now|
-----------------------------------------------------------------------
+|               Objective             |            Objective ETA         |
+|:-----------------------------------:|:--------------------------------:|
+|~~*Chat-based* Programming Language~~|            Jan 25, 2017          |
+|         ~~Points System~~           |            Apr 14, 2017          |
+|       Add Commands With Chat        |            Mar 18, 2017          |
+|          Minigames System           |            June 12, 2017         |
+|          Intuitive NLP AI           | Undefinitively Long Time From Now|
+--------------------------------------------------------------------------
