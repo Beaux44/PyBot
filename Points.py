@@ -68,7 +68,7 @@ def points():
 
             _pointsFileWrite = open(_pointsFileName, 'w')
             _pointsFileWrite.write(str(_pointsList))
-        t(15)
+        t(60)
 
 
 thread = threading.Thread(target=points)
