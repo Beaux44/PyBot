@@ -14,12 +14,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-
-import string
-
 from Settings import CHANNEL
 
-from time import sleep as t
+from time import sleep as _t
 
 # Gets the username, without capitals, can be used for detecting if a particular whatever is in the username.
 def getUser(line):
@@ -93,7 +90,7 @@ def getSPAM(message):
 		spam = word * int(number)
 	except (TypeError, ValueError, OverflowError):
 		print('Syntax error'); return ''
-	t(.1)
+	_t(.1)
 	return spam
 
 # This is unfinished, however, in the future wil be used to add commands.
@@ -102,15 +99,18 @@ def getCommand(message):
 		index = message[3:-1]
 		index = index.split("(", 1)
 		index[0] = index[0][:-1]
-		# o = open(commands.dat, 'w')
-		# o.write("    if message.startswith(\"!" + index[0] + "\"):\n")
-		# o.write("     t(.75)\n")
-		# o.write("     sendMessage(s, \"" + index[1] + "\")\n")
-		# o.write("     break\n")
+		# o = open(commands.dat, 'a')
+		# o.write("\tif message.startswith(\"!" + index[0] + "\"):\n")
+		# o.write("\t\t_t(.75)\n")
+		# o.write("\t\tsendMessage(s, \"" + index[1] + "\")\n")
+		# o.write("\t\tbreak\n")
 		# o.close()
 		return index
 def getRequest(Display, message):
 	o = open("Requests.txt", "a")
-	o.write(Display + ": " + message[8:] + "\n")
+	a = ""
+	for i in message:
+		a += i if ord(i) < 128 else "~"
+	o.write(Display + ": " + a[8:] + "\n")
 	o.close()
 	return

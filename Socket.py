@@ -44,8 +44,8 @@ def Exit(s):
 def sendMessage(s, message):
 	if message != "":
 		messageTemp = "PRIVMSG #" + CHANNEL + " :" + str(message)
-		t(0.05)
-		s.send((messageTemp + "\r\n").encode())
+		t(0.15)
+		s.send(str(messageTemp + "\r\n").encode())
 		print("Sent:", str(message))
 
 # used to join the Twitch IRC chat room

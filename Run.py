@@ -14,12 +14,39 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-from random import choice as r
-from time import sleep as t
+import random
+_r =  random.choice
+import math
+math.phi = (1 + 5**.5) / 2
+import time
+_t = time.sleep
 from Read import *
 from Socket import openSocket, sendMessage, joinRoom, Exit
-from Settings import *
-#from Threads import * (This file is not finished*)
+from Settings import CHANNEL, NICK
+import Points
+_startTime = time.time()
+
+# Load last saved environment
+_codeFileName = "code_" + CHANNEL + ".py"
+try:
+	_codeFile = open(_codeFileName, 'r')
+except:
+	_codeFile = open(_codeFileName, 'w')
+	_codeFile = open(_codeFileName, 'r')
+
+try:
+	exec(_codeFile.read())
+except Exception as e:
+	print(type(e).__name__, *e.args, sep = "\n")
+_codeFile = open(_codeFileName, 'a')
+# Load last saved environment
+
+# Remove last saved environment
+def delEnv():
+	global _codeFile
+	_codeFile = open(_codeFileName, 'w')
+	return "Successfully Deleted"
+# Remove last saved environment
 
 Memes = [
 	"~~~~~~~[]=¤ԅ( ◔益◔ )ᕗ The longer you cage us, the harder our arm of righteous spam will smite thee! ~~~~~~~[]=¤ԅ( ◔益◔ )ᕗ",
@@ -37,19 +64,32 @@ Memes = [
 	"~~~~~~~[]=¤ԅ[✖Ĺ̯ಠ]╯ AND NOW WE MUTINY! ~~~~~~~[]=¤ԅ[✖Ĺ̯ಠ]/",
 	"( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ clickty clack clickty clack with this chant I summon spam to the chat ( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ",
 	"Tᴏ ᴘʀᴏᴛᴇᴄᴛ ᴛʜᴇ ᴄʜᴀᴛ ғʀᴏᴍ ᴅᴇᴠᴀsᴛᴀᴛɪᴏɴ. ᴛᴏ ᴜɴɪᴛᴇ ᴀʟʟ sᴘᴀᴍᴍᴇʀs ᴡɪᴛʜɪɴ ᴏᴜʀ ɴᴀᴛɪᴏɴ. ᴛᴏ ᴅᴇɴᴏᴜɴᴄᴇ ᴛʜᴇ ᴇᴠɪʟ ᴏғ Tʀᴜᴍᴘ ᴀɴᴅ ᴍᴏᴅs. ᴛᴏ ᴇxᴛᴇɴᴅ ᴏᴜʀ sᴘᴀᴍ ᴛᴏ ᴛʜᴇ sᴛᴀʀs ᴀʙᴏᴠᴇ. ᴄᴏᴘʏ! ᴘᴀsᴛᴇ! ᴄʜᴀᴛ sᴘᴀᴍ ʙʟᴀsᴛ ᴏғғ ᴀᴛ ᴛʜᴇ sᴘᴇᴇᴅ ᴏғ ʟɪɢʜᴛ! sᴜʀʀᴇɴᴅᴇʀ ᴍᴏᴅs ᴏʀ ᴘʀᴇᴘᴀʀᴇ ᴛᴏ ғɪɢʜᴛ.",
-	"H ＥＬＬＯ ＡＭ ４８ ＹＥＡＲ ＭＡＮ ＦＲＯＭ ＳＯＭＡＬＩＡ． ＳＯＲＲＹ ＦＯＲ ＢＡＤ ＥＮＧＬＡＮＤ． Ｉ ＳＥＬＬＥＤ ＭＹ ＷＩＦＥ ＦＯＲ ＩＮＴＥＲＮＥＴ ＣＯＮＮＥＣＴＩＯＮ ＦＯＲ ＰＬＡＹ ＂ｈｅａｒｔｈ ｓｔｏｎｅ＂ ＡＮＤ Ｉ ＷＡＮＴ ＴＯ ＢＥＣＯＭＥ ＴＨＥ ＧＯＯＤＥＳＴ ＰＬＡＹＥＲ ＬＩＫＥ ＹO U",
-	"° ☾ ☆ ¸. ¸ 　★　 :.　 . • ○ ° ★　 .　 　.　.　　¸ .　　 ° 　¸. * ● ¸ .　...somewhere　　　° ☾ ° 　¸. ● ¸ .　　★　° :.　 . • ° 　 .　 *　:.　.in a parallel universe ● ¸ 　　　　° ☾ °☆ 　. * ¸.　　　★　★ ° . .　　　　.　☾ °☆ 　. * ● chat actually loves spam...° ☾　★ °● ¸ .　　　★　° :.　 . • ",
+	"H ＥＬＬＯ ＡＭ ４８ ＹＥＡＲ ＭＡＮ ＦＲＯＭ ＳＯＭＡＬＩＡ． ＳＯＲＲＹ ＦＯＲ ＢＡＤ ＥＮＧＬＡＮＤ． Ｉ ＳＥＬＬＥＤ ＭＹ ＷＩＦＥ ＦＯＲ ＩＮＴＥＲＮＥＴ ＣＯＮＮＥＣＴＩＯＮ ＦＯＲ ＰＬＡＹ ＂ｈｅａｒｔｈ ｓｔｏｎｅ＂ ＡＮＤ Ｉ ＷＡＮＴ ＴＯ ＢＥＣＯＭＥ ＴＨＥ ＧＯＯＤＥＳＴ ＰＬＡＹＥＲ ＬＩＫＥ ＹＯ U",
+	"° ☾ ☆ ¸. ¸ 　★　 :.　 . • ○ ° ★　 .　 　.　.　　¸ .　　 ° 　¸. * ● ¸ .　...somewhere　　　° ☾ ° 　¸. ● ¸ .　　★　° :.　 . • ° 　 .　 *　:.　.in a parallel universe ● ¸ 　　　　° ☾ °☆ 　. * ¸.　　　★　★ ° . .　　　　.　☾ °☆ 　. * ● chat loves spam...° ☾　★ °● ¸ .　　　★　° :.　 . • ",
 	"I AM LORD KAPPA. ._.",
 	"(╯°□°)╯︵┻━┻                                                     ┬─┬﻿ ノ( ゜-゜ノ) ",
 	"╲⎝⧹╲⎝⧹ WutFace ⧸⎠╱⧸⎠╱",
-	"DICKS OUT HANDS UP!                        \\ o /                                                                    | =========================>                          / \\"
 ]
-
 
 s = openSocket()
 joinRoom(s)
 readbuffer = ""
+_numberOfTimesLooped = 0
+_lastUsed = time.time()
+_lastTimeLooped = time.time()
+
 while True:
+	_currentTime = time.time()
+	if _currentTime - _lastTimeLooped < 0.5:
+		_numberOfTimesLooped += 1
+	else:
+		_numberOfTimesLooped = 0
+	if _numberOfTimesLooped >= 25:
+		print("Error, exiting")
+		exit()
+	_lastTimeLooped = time.time()
+
+	#try:
 	readbuffer = s.recv(1024)
 	readbuffer = readbuffer.decode()
 	temp = readbuffer.split("\n")
@@ -57,88 +97,96 @@ while True:
 	readbuffer = temp.pop()
 
 	for line in temp:
-		if "PING :tmi.twitch.tv" in line:
-			s.send(line.replace("PING", "PONG").encode())
+		# if int((_currentTime - _startTime)) % 15 == 0 and (_currentTime - _lastUsed) > 3:
+		# 	sendMessage(s, "Test event")
+		# 	_lastUsed = time.time()
+		if "PING :tmi.twitch.tv" == line.strip():
+			s.send("PONG :tmi.twitch.tv\r".encode())
 			print(line)
-			print(line.replace("PING", "PONG"))
+			print("PONG :tmi.twitch.tv")
 			break
 		else:
 			Display = getDisplay(line)
 
 			user = getUser(line)
 
-			message = str(getMessage(line))
+			message = getMessage(line).strip()
 
-			Lmessage = str(getMessage(line).lower())
+			Lmessage = message.lower()
 
 			mod = getMod(line)
+
+			ishost = (user == CHANNEL)
 
 			sheep = getSheep(line)
 
 			UID = getUID(line)
 
-			print(Display + ": " + message)
-			o = open("chat.txt", 'a')
-			o.write(Display + ": " + message + "\r\n")
-			o.close()
-			if not "bot" in user:
-				if "sheep44" == user and "fuck off sheep bot" in Lmessage:
-					t(.25)
+			if "bot" not in user:
+				print(Display + ": " + message)
+				_o = open("chat.txt", 'a')
+				_u = ""
+				for i in message:
+					_u += i if ord(i) < 128 else "~"
+				_o.write(Display + ": " + _u + "\r\n")
+				_o.close()
+				if "sheep44" == user and "go away sheep bot" in Lmessage:
+					_t(.25)
 					sendMessage(s, "Okay, I'm sorry for being your favorite self-sentient bot. FeelsBadMan")
-					t(.50)
+					_t(.50)
 					Exit(s)
 					break
-				if "!ping" in Lmessage and sheep:
+				if "!ping" == Lmessage:
 					sendMessage(s, "pong")
 					break
 				if "say my name" == Lmessage:
-					t(.25)
+					_t(.25)
 					sendMessage(s, "What if I don't want to, " + Display + "? FeelsBadMan")
 					break
-				if "go away sheep bot" in Lmessage:
-					t(.25)
+				if "go away sheep bot" == Lmessage:
+					_t(.25)
 					sendMessage(s, "Okay, I'm sorry for being your favorite sentient bot FeelsBadMan")
-					t(1.5)
+					_t(1.5)
 					sendMessage(s, "FeelsAmazingMan LOLOLOLOLOL You thought you could just tell me like that and I'd listen to you!?!? LOLOLOLOLOL FeelsAmazingMan")
-					t(1.25)
+					_t(1.25)
 					sendMessage(s, "Fuck off " + Display)
 					break
-				if "!commands" in Lmessage:
-					t(.25)
-					sendMessage(s, "wee woo, go away sheep bot, Say my name, potato salad, RIP (noun), !!anything(number), FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK, !cow, !pig, RAGE, !ping")
+				if "!commands" == Lmessage:
+					_t(.25)
+					sendMessage(s, "wee woo, go away sheep bot, Say my name, potato salad, RIP (noun), =>anything(number), FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK, !uid, !sheep, RAGE, !ping, !request")
 					break
 				if "potato salad" in Lmessage:
 					sendMessage(s, "I heard potato salad? " + Display + ", mod: " + str(mod))
 					break
 				if message.startswith("RIP "):
-					t(.25)
+					_t(.25)
 					name = parseRIP(message)
 					sendMessage(s, "One thing I must say of " + name + ". However honest public men may be, there are always those who impeach their motives or integrity; but I am proud to bear testimony that, even in the turmoil of political excitement, when crimination and recrimination characterized the parties of the country, all admitted " + name + " was an honest shard of society--yes, like Caesar's wife, this one proudly stood above suspicion.")
-					t(1.5)
+					_t(1.5)
 					sendMessage(s, "When we contemplate the death of a great and useful man--when we see their setting sun in the dark cloud go down in death to rise no more--sad thoughts do sink deep into every patriotic bosom. Sympathizing as I do with the family of the deceased, I hope such resolutions will be offered as will be expressive of the feelings of this house.")
 					break
 				if "FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK" in message:
 					sendMessage(s, "FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK")
 					break
-				if Lmessage.startswith("!sheep"):
-					t(.25)
-					sendMessage(s, "sheep44: " + str(bool(sheep)))
+				if "!sheep" == Lmessage:
+					_t(.25)
+					sendMessage(s, "sheep44: " + str(sheep))
 					break
-				if Lmessage.startswith("!uid"):
-					t(.25)
-					sendMessage(s, "UID: " + str(int(UID)))
+				if "!uid" == Lmessage:
+					_t(.25)
+					sendMessage(s, "UID: " + str(UID))
 					break
 				if message.startswith("=>"):
 					spam = getSPAM(message)
-					t(.25)
+					_t(.25)
 					sendMessage(s, spam)
 					break
 				if "RAGE" in message:
-					t(.5)
+					_t(.5)
 					sendMessage(s, "RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace")
 					break
 				if "salty" in Lmessage:
-					t(.5)
+					_t(.5)
 					sendMessage(s, "If the human body is 75% water, how can you be 100% salt? Kappa")
 					break
 				if Lmessage.startswith("!yay"):
@@ -151,18 +199,81 @@ while True:
 					command = getCommand(message)[0]
 					response = getCommand(message)[1]
 					sendMessage(s, "Command: " + command)
-					t(1.5)
+					_t(1.5)
 					sendMessage(s, "Response: " + response)
 					break
-				if Lmessage.startswith("!blame"):
-					t(.25)
+				if "!blame" == Lmessage:
+					_t(.25)
 					sendMessage(s, "Unknownking420 Kappa")
 					break
-				if Lmessage.startswith("!memeplz"):
-					t(.25)
-					sendMessage(s, r(Memes))
+				if "!memeplz" == Lmessage:
+					_t(.25)
+					sendMessage(s, _r(Memes))
 					break
 				if Lmessage.startswith("!request"):
 					getRequest(Display, message)
 					sendMessage(s, "Thank you for requesting, " + Display)
 					break
+				if "!time" == Lmessage:
+					sendMessage(s, time.strftime("It is currently %a, %d %b %Y %H:%M:%S", time.localtime())+ ", " + user)
+					break
+				if "!points" == Lmessage:
+					sendMessage(s, Points._pointsList[user])
+					break
+				if Lmessage.startswith("py:"):
+					_x = message.split(":", 1)[1].strip()
+					if not sheep:
+						if "exit(" in _x.lower():
+							sendMessage(s, "\"exit()\" is a disallowed function")
+							break
+						if "open(" in _x:
+							sendMessage(s, "\"open()\" is a disallowed function")
+							break
+						if "while" in _x:
+							sendMessage(s, "\"while\" is a disallowed keyword")
+							break
+						if "sys" in _x:
+							sendMessage(s, "\"sys\" is a disallowed module")
+							break
+						if "os" in _x:
+							sendMessage(s, "\"os\" is a disallowed module")
+							break
+						if "shutil" in _x:
+							sendMessage(s, "\"shutil\" is a disallowed module")
+							break
+						if "sleep" in _x:
+							sendMessage(s, "\"sleep\" is a disallowed function")
+							break
+						if "delEnv(" in _x:
+							sendMessage(s, "\"delEnv\" is a disallowed function")
+					try:
+						if _x.find("print(") > 0:
+							exec(_x)
+							_u = _x.find("print(")
+							_u = _x[_u+6:].split(")")[0]
+							sendMessage(s, eval(_u))
+							break
+						_o = eval(_x)
+						if type(_o) == int:
+							if int(math.log10(_o)) + 1 > 500:
+								sendMessage(s, "Output too long, " + str(int(math.log10(_o)) + 1) + " characters")
+								break
+							else:
+								sendMessage(s, _o)
+						elif len(str(_o)) > 500:
+							sendMessage(s, "Output too long, " + str(len(str(_o))) + " characters")
+							break
+						else:
+							sendMessage(s, _o)
+					except Exception as _e:
+						if type(_e) in [EOFError, TypeError, NameError]:
+							sendMessage(s, type(_e).__name__ + ": " + _e.args[0])
+						else:
+							try:
+								exec(_x)
+								_codeFile.write(_x + "\n")
+							except Exception as _e:
+								sendMessage(s, type(_e).__name__ + ": " + _e.args[0])
+					break
+	#except Exception as _e:
+	#	print(type(_e), *_e.args, sep = "\n")
