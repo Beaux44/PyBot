@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 # PyBot is a Twitch IRC chatbot used particularly for spamming your chat, but as well as a general chatbot for doing whatever.
-# Copyright (C) 2016 Sheep44
+# Copyright (C) 2016-2018 Sheep44
 #
 # This file is part of PyBot.
 #
@@ -13,40 +13,42 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
 import random
-_r =  random.choice
 import math
-math.phi = (1 + 5**.5) / 2
 import time
-_t = time.sleep
+from re import findall
 from Read import *
 from Socket import openSocket, sendMessage, joinRoom, Exit
 from Settings import CHANNEL, NICK
 import Points
+
+_r =  random.choice
+math.phi = (1 + 5**.5) / 2
+sleep = time.sleep
 _startTime = time.time()
 
 # Load last saved environment
-_codeFileName = "code_" + CHANNEL + ".py"
+_codeFileName = "code/" + CHANNEL + ".py"
 try:
 	_codeFile = open(_codeFileName, 'r')
 except:
 	_codeFile = open(_codeFileName, 'w')
 	_codeFile = open(_codeFileName, 'r')
 
-try:
-	exec(_codeFile.read())
-except Exception as e:
-	print(type(e).__name__, *e.args, sep = "\n")
+for i in _codeFile.read().split("\n"):
+	try:
+		exec(i)
+	except:
+		pass
 _codeFile = open(_codeFileName, 'a')
 # Load last saved environment
 
 # Remove last saved environment
 def delEnv():
-	global _codeFile
-	_codeFile = open(_codeFileName, 'w')
+	open(_codeFileName, 'w').close()
 	return "Successfully Deleted"
 # Remove last saved environment
+
 
 Memes = [
 	"~~~~~~~[]=¤ԅ( ◔益◔ )ᕗ The longer you cage us, the harder our arm of righteous spam will smite thee! ~~~~~~~[]=¤ԅ( ◔益◔ )ᕗ",
@@ -73,33 +75,37 @@ Memes = [
 
 s = openSocket()
 joinRoom(s)
-readbuffer = ""
+readbuffer = b""
 _numberOfTimesLooped = 0
 _lastUsed = time.time()
 _lastTimeLooped = time.time()
 
 while True:
+	# HACK
 	_currentTime = time.time()
 	if _currentTime - _lastTimeLooped < 0.5:
 		_numberOfTimesLooped += 1
+		if _numberOfTimesLooped > 100:
+			_codeFile.close()
+			_POINTS_LIST_ = open(Points._pointsFileName, "w")
+			_POINTS_LIST_.write(str(Points._pointsList))
+			_POINTS_LIST_.close()
+			from os import system
+			try:
+				system("py Run.py " + CHANNEL)
+			except KeyboardInterrupt:
+				pass
+			exit()
+		_lastTimeLooped = time.time()
 	else:
 		_numberOfTimesLooped = 0
-	if _numberOfTimesLooped >= 25:
-		print("Error, exiting")
-		exit()
-	_lastTimeLooped = time.time()
 
 	#try:
 	readbuffer = s.recv(1024)
-	readbuffer = readbuffer.decode()
-	temp = readbuffer.split("\n")
-	readbuffer = readbuffer.encode()
+	temp = readbuffer.decode().split("\n")
 	readbuffer = temp.pop()
 
 	for line in temp:
-		# if int((_currentTime - _startTime)) % 15 == 0 and (_currentTime - _lastUsed) > 3:
-		# 	sendMessage(s, "Test event")
-		# 	_lastUsed = time.time()
 		if "PING :tmi.twitch.tv" == line.strip():
 			s.send("PONG :tmi.twitch.tv\r".encode())
 			print(line)
@@ -107,173 +113,264 @@ while True:
 			break
 		else:
 			Display = getDisplay(line)
-
 			user = getUser(line)
-
 			message = getMessage(line).strip()
-
 			Lmessage = message.lower()
-
 			mod = getMod(line)
-
 			ishost = (user == CHANNEL)
-
-			sheep = getSheep(line)
-
+			noot = getNoot(line)
 			UID = getUID(line)
 
 			if "bot" not in user:
 				print(Display + ": " + message)
-				_o = open("chat.txt", 'a')
-				_u = ""
-				for i in message:
-					_u += i if ord(i) < 128 else "~"
-				_o.write(Display + ": " + _u + "\r\n")
+				_o = open("chat.txt", 'ab')
+				_o.write((Display + ": " + message + "\r\n").encode())
 				_o.close()
-				if "sheep44" == user and "go away sheep bot" in Lmessage:
-					_t(.25)
-					sendMessage(s, "Okay, I'm sorry for being your favorite self-sentient bot. FeelsBadMan")
-					_t(.50)
-					Exit(s)
+				if noot and "!reload" == Lmessage:
+					_codeFile.close()
+					_POINTS_LIST_ = open(Points._pointsFileName, "w")
+					_POINTS_LIST_.write(str(Points._pointsList))
+					_POINTS_LIST_.close()
+					from os import system
+					try:
+						system("py Run.py " + CHANNEL)
+					except KeyboardInterrupt:
+						pass
+					exit()
+				if len(findall(r"(?:hi|hello|hey)\,?\s?noot\s?bot", Lmessage)):
+					sendMessage(s, "Hi, " + Display)
+					break
+				if noot and "go away noot bot" in Lmessage:
+					sleep(.25)
+					sendMessage(s,
+						"Okay, I'm sorry for being your favorite sentient bot. FeelsBadMan")
+					sleep(.50)
+					Exit(s, _codeFile, Points._pointsFileName, Points._pointsList)
 					break
 				if "!ping" == Lmessage:
 					sendMessage(s, "pong")
 					break
 				if "say my name" == Lmessage:
-					_t(.25)
+					sleep(.25)
 					sendMessage(s, "What if I don't want to, " + Display + "? FeelsBadMan")
 					break
-				if "go away sheep bot" == Lmessage:
-					_t(.25)
+				if "go away noot bot" == Lmessage:
+					sleep(.25)
 					sendMessage(s, "Okay, I'm sorry for being your favorite sentient bot FeelsBadMan")
-					_t(1.5)
+					sleep(1.5)
 					sendMessage(s, "FeelsAmazingMan LOLOLOLOLOL You thought you could just tell me like that and I'd listen to you!?!? LOLOLOLOLOL FeelsAmazingMan")
-					_t(1.25)
+					sleep(1.25)
 					sendMessage(s, "Fuck off " + Display)
 					break
 				if "!commands" == Lmessage:
-					_t(.25)
-					sendMessage(s, "wee woo, go away sheep bot, Say my name, potato salad, RIP (noun), =>anything(number), FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK, !uid, !sheep, RAGE, !ping, !request")
+					sleep(.25)
+					sendMessage(s, "go away noot bot, Say my name, potato salad, RIP (noun), =>anything(number), FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK, !uid, !sheep, RAGE, !ping, !request, !memeplz, !yay, !time, !points, salty, !help")
 					break
 				if "potato salad" in Lmessage:
 					sendMessage(s, "I heard potato salad? " + Display + ", mod: " + str(mod))
 					break
 				if message.startswith("RIP "):
-					_t(.25)
+					sleep(.25)
 					name = parseRIP(message)
 					sendMessage(s, "One thing I must say of " + name + ". However honest public men may be, there are always those who impeach their motives or integrity; but I am proud to bear testimony that, even in the turmoil of political excitement, when crimination and recrimination characterized the parties of the country, all admitted " + name + " was an honest shard of society--yes, like Caesar's wife, this one proudly stood above suspicion.")
-					_t(1.5)
+					sleep(1.5)
 					sendMessage(s, "When we contemplate the death of a great and useful man--when we see their setting sun in the dark cloud go down in death to rise no more--sad thoughts do sink deep into every patriotic bosom. Sympathizing as I do with the family of the deceased, I hope such resolutions will be offered as will be expressive of the feelings of this house.")
 					break
 				if "FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK" in message:
 					sendMessage(s, "FFFFFFFFFFUUUUUUUUUUUUCCCCCCCCCCCCCCKKKKKKKKKKK")
 					break
 				if "!sheep" == Lmessage:
-					_t(.25)
-					sendMessage(s, "sheep44: " + str(sheep))
+					sleep(.25)
+					sendMessage(s, "sheep44: " + str(noot))
 					break
 				if "!uid" == Lmessage:
-					_t(.25)
+					sleep(.25)
 					sendMessage(s, "UID: " + str(UID))
 					break
 				if message.startswith("=>"):
-					spam = getSPAM(message)
-					_t(.25)
-					sendMessage(s, spam)
+					_spam = getSPAM(message)
+					sleep(.25)
+					try:
+						if Points._pointsList[user] < _spam.count(message.rsplit("(", 1)[0][2:]) * 5 and not noot:
+							sendMessage(s, "Not enough points")
+							break
+						elif not noot:
+							Points._pointsList[user] -= _spam.count(message.rsplit("(", 1)[0][2:]) * 5
+					except:
+						if not noot:
+							sendMessage(s, "Not enough points")
+							break
+					sendMessage(s, _spam)
 					break
 				if "RAGE" in message:
-					_t(.5)
+					sleep(.5)
 					sendMessage(s, "RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace RageFace")
 					break
 				if "salty" in Lmessage:
-					_t(.5)
+					sleep(.5)
 					sendMessage(s, "If the human body is 75% water, how can you be 100% salt? Kappa")
 					break
-				if Lmessage.startswith("!yay"):
+				if Lmessage == "!yay":
 					sendMessage(s, "Throw your hands up and celebrate with " + Display + "! \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/ \o/")
 					break
 				if "abusive mods!" in Lmessage:
 					sendMessage(s, "The mods are abusive! :( D: Please fix it! :(")
 					break
-				if message.startswith("!!") and sheep:
+				if message.startswith("!!") and noot:
 					command = getCommand(message)[0]
 					response = getCommand(message)[1]
 					sendMessage(s, "Command: " + command)
-					_t(1.5)
+					sleep(1.5)
 					sendMessage(s, "Response: " + response)
 					break
 				if "!blame" == Lmessage:
-					_t(.25)
+					sleep(.25)
 					sendMessage(s, "Unknownking420 Kappa")
 					break
 				if "!memeplz" == Lmessage:
-					_t(.25)
+					sleep(.25)
 					sendMessage(s, _r(Memes))
 					break
 				if Lmessage.startswith("!request"):
-					getRequest(Display, message)
-					sendMessage(s, "Thank you for requesting, " + Display)
+					if Display != "ChrisarN":
+						getRequest(Display, message)
+						sendMessage(s, "Thank you for requesting, " + Display)
+					else:
+						sendMessage(s, "You have been banned from requesting")
 					break
 				if "!time" == Lmessage:
-					sendMessage(s, time.strftime("It is currently %a, %d %b %Y %H:%M:%S", time.localtime())+ ", " + user)
+					sendMessage(s,
+								time.strftime("It is currently %a, %d %b %Y %H:%M:%S",
+								time.localtime()) + ", " + Display)
 					break
 				if "!points" == Lmessage:
-					sendMessage(s, Points._pointsList[user])
+					try:
+						sendMessage(s, Points._pointsList[user])
+					except:
+						sendMessage(s, "not found")
 					break
+				if "!help" == Lmessage:
+					sendMessage(s, "You can do everything listed here excluding a few except cases: https://docs.python.org/3.6/ SeemsGood")
+					break
+				if Lmessage.startswith("+<"):
+					addCommand(message)
+					break
+				if Lmessage.startswith("-<"):
+					delCommand(message)
+					break
+				if message.startswith("!"):
+					try:
+						sendMessage(s, runCommand(Lmessage,
+										**{'line':line,
+											'display':Display,
+											'user':user,
+											'mod':mod,
+											'ishost':ishost,
+											'noot':noot,
+											'UID':UID,
+											'channel':CHANNEL
+										}
+									)
+						)
+					except:
+						sendMessage(s, "Command could not be run.")
+					break
+
+				# NOTE: Move this to an external file at some point
 				if Lmessage.startswith("py:"):
 					_x = message.split(":", 1)[1].strip()
-					if not sheep:
-						if "exit(" in _x.lower():
-							sendMessage(s, "\"exit()\" is a disallowed function")
+					_mem = _x
+					if not noot:
+						if "exit" in _x.lower():
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"exit()\" is a disallowed function")
 							break
-						if "open(" in _x:
-							sendMessage(s, "\"open()\" is a disallowed function")
-							break
-						if "while" in _x:
-							sendMessage(s, "\"while\" is a disallowed keyword")
+						if "socket" in _x:
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"socket\" is a disallowed module")
 							break
 						if "sys" in _x:
-							sendMessage(s, "\"sys\" is a disallowed module")
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"sys\" is a disallowed module")
 							break
-						if "os" in _x:
-							sendMessage(s, "\"os\" is a disallowed module")
+						if " os" in _x:
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"os\" is a disallowed module")
 							break
-						if "shutil" in _x:
-							sendMessage(s, "\"shutil\" is a disallowed module")
+						if " shutil" in _x:
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"shutil\" is a disallowed module")
+							break
+						if "global" in _x:
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"globals()\" is a disallowed function")
+							# else:
+							# 	sendMessage(s, "\"global\" is a disallowed keyword")
+							break
+						if "open" in _x:
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"open()\" is a disallowed function")
+							break
+						if "del" in _x:
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"del\" is a disallowed keyword")
+							break
+						if "while" in _x:
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"while\" is a disallowed keyword")
 							break
 						if "sleep" in _x:
-							sendMessage(s, "\"sleep\" is a disallowed function")
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "\"sleep\" is a disallowed function")
 							break
-						if "delEnv(" in _x:
-							sendMessage(s, "\"delEnv\" is a disallowed function")
+						if "Points." in _x:
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "editing points is disallowed")
+							break
+						if findall(r"\s+s\s*[\.=]{1}", _x) or _x == "s":
+							sendMessage(s, "I'm sorry {} but I can't let you do that".format(Display))
+							# sendMessage(s, "DON'T FUCK WITH S!!!")
+							break
 					try:
-						if _x.find("print(") > 0:
-							exec(_x)
+						if _x.find("print(") >= 0:
+							exec(_x.replace(findall(r"print[(].+[)]", _x)[0], "pass"))
 							_u = _x.find("print(")
-							_u = _x[_u+6:].split(")")[0]
-							sendMessage(s, eval(_u))
+							_u = eval(_x[_u+6:].split(")", 1)[0])
+							if type(_u) != int:
+								if len(str(_u)) < 450:
+									sendMessage(s, _u)
+								else:
+									sendMessage(s, "Output too long, " + str(len(str(_u))) + " characters")
+							else:
+								if int(math.log10(_u)) + 1 < 450:
+									sendMessage(s, _u)
+								else:
+									sendMessage(s, "Output too long, " + str(int(math.log10(_u)) + 1) + " characters")
 							break
 						_o = eval(_x)
 						if type(_o) == int:
-							if int(math.log10(_o)) + 1 > 500:
+							if int(math.log10(_o)) + 1 > 450:
 								sendMessage(s, "Output too long, " + str(int(math.log10(_o)) + 1) + " characters")
 								break
 							else:
 								sendMessage(s, _o)
-						elif len(str(_o)) > 500:
+						elif len(str(_o)) > 450:
 							sendMessage(s, "Output too long, " + str(len(str(_o))) + " characters")
 							break
 						else:
-							sendMessage(s, _o)
+							sendMessage(s, _o if type(_o).__name__.lower() not in ["module"] else "")
 					except Exception as _e:
-						if type(_e) in [EOFError, TypeError, NameError]:
-							sendMessage(s, type(_e).__name__ + ": " + _e.args[0])
+						if type(_e) in [EOFError, TypeError, NameError, MemoryError]:
+							sendMessage(s, type(_e).__name__ + (": " + _e.args[0] if len(_e.args) else ""))
 						else:
 							try:
 								exec(_x)
-								_codeFile.write(_x + "\n")
+								if "print(" not in _mem:
+									_codeFile.write(_x + "\n")
+									_codeFile.close()
+									_codeFile = open(_codeFileName, 'a')
 							except Exception as _e:
-								sendMessage(s, type(_e).__name__ + ": " + _e.args[0])
+								sendMessage(s, type(_e).__name__ + (": " + _e.args[0] if len(_e.args) else ""))
 					break
 	#except Exception as _e:
 	#	print(type(_e), *_e.args, sep = "\n")
