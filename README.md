@@ -10,7 +10,7 @@ I'm currently attempting to create a chat-based programming language for the bot
 |:-----------------------------------:|:--------------------------------:|
 |~~*Chat-based* Programming Language~~|            Jan 25, 2017          |
 |         ~~Points System~~           |            Apr 14, 2017          |
-|       Add Commands With Chat        |            Mar 18, 2017          |
+|     ~~Add Commands With Chat~~      |            Mar 18, 2017          |
 |          Minigames System           |            June 12, 2017         |
 |          Intuitive NLP AI           | Undefinitively Long Time From Now|
 --------------------------------------------------------------------------
